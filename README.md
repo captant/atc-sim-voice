@@ -1,5 +1,5 @@
 # atc-sim-voice
-Windows Speech Recognition Macros for [ATC-SIM.com](http://www.atc-sim.com/) command input
+Windows Speech Recognition Macros for [ATC-SIM.com](http://www.atc-sim.com/) command input.
 
 ## Installation
 ### Required Programs
@@ -21,3 +21,10 @@ atcsimvoice will only recognize voice commands when the [ATC-SIM website](http:/
 1) Ensure your microphone is on, Windows Speech Recognition is open, and Windows Speech Recognition Macros is open.
 2) Ensure that the Windows Speech Recognition app is listening. (If it says "sleeping," it's not listening.)
 3) With the [ATC-SIM website](http://www.atc-sim.com/) open and in focus, say "Radio check." If atcsimvoice is installed correctly, you should hear a computerized voice respond "Five by five." If you hear this, congrats! You've sucessfully installed atcsimvoice!
+
+## Using Macro
+atcsimvoice is a very simple macro. It can only input text into text boxes. To use:
+1) Click into the atc-sim command box.
+2) Say voice command. If recognized, text will be typed into the box automatically. If it is not recognized, WSR's default input box will appear. Say "Cancel," to get back to the atc-sim command box.
+3) Pause between each command. The macro can only recognize one command at a time.
+4) Once you have constructed your command, press enter on your keyboard to submit.
