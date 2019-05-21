@@ -1,5 +1,5 @@
 # atc-sim-voice
-Windows Speech Recognition Macros for atc-sim.com command input
+Windows Speech Recognition Macros for [ATC-SIM.com](http://www.atc-sim.com/) command input
 
 ## Installation
 ### Required Programs
