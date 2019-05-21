@@ -49,7 +49,7 @@
 ### Approach
 | Say       | Action      |
 | --------- |-------------|
-| CLEARED TO LAND RUNWAY [NUMBER]  | Clears aircrat to land.|
+| CLEARED TO LAND RUNWAY [NUMBER]  | Clears aircraft to land.|
 
 ### Cancellation
 | Say       | Action      |
