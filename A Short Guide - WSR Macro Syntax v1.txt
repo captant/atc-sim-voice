@@ -1,0 +1,273 @@
+Glen Shires  2008.09.12  version 1.0 
+
+Here's a very terse description of the "Windows Speech Recognition Macro Technical Preview" syntax.
+It's handy for copying/pasting snippets into your macros.
+
+Sorry there's no explanations, but now that you know the keywords, its easy to search the web for examples.
+In particular, here are some great places to search:
+http://blogs.msdn.com/robch/
+http://tech.groups.yahoo.com/group/ms-speech/
+http://www.emicrophones.com/download/WSRToolkitManual.pdf
+
+
+First, the compulsory "hello world", a complete macro to illustrate the simplest of syntaxes.
+You say "hello" and WSR responds by inserting a sentence into the current application.
+
+<speechMacros>
+  <command>
+    <listenFor>hello</listenFor>
+    <insertText>Hello world, it's a wonderful day!</insertText>
+  </command>
+</speechMacros>
+
+Each of these elements, and many more, are tersely defined below...
+
+
+
+===  Speech Macros  === 
+
+<speechMacros>
+  contains in the following order:
+    condition(s)       (optional)
+    <command>(s)       (required)
+    grammar rule(s)    (optional)
+    digital signature  (optional)
+</speechMacros>
+
+
+
+===  Command  === 
+
+<command>
+  contains in the following order:
+    condition(s)        optional
+    grammar rule(s)     typically <listenFor>
+    executor(s)         for example <sendKeys>
+</command>
+
+
+
+===  Conditions  ===
+
+<appIsInForeground processName="optional" windowTitle="optional" windowTitleContains="optional"/>
+
+<appIsRunning processName="optional" windowTitle="optional" windowTitleContains="optional"/>
+
+<stateIsSet" name="required" value="optional"/>
+
+<scriptCondition language="required" name="optional">something</scriptCondition>
+
+<condition operator="and|or|not">  
+  can contain any of <appIsInForeground> <appIsRunning> <condition> <stateIsSet> <scriptCondition>
+</condition>
+
+
+
+===  Grammar Rules  ===
+
+<listenFor name="optional">grammar to match</listenFor>
+  can contain any of:
+    ?optional word match
+    [textInDocument] to match any text in current document
+    [...] to match anything (free-form dictation)
+    [name] name parameter of any of the grammar rules below
+
+  The results that matched can then be inserted into executors by {[textInDocument]} {[...]} {[name]}
+  as well as {[clipboardText]}
+
+<listenForList name="optional" propname="optional" useSubset="optional">
+  contains one or more of <item propval="optional">grammar to match</item>
+<listenForList/>
+
+<rule name="optional">sapi grammar xml</rule>
+  For sapi grammar syntax, see http://msdn.microsoft.com/en-us/library/ms723632(VS.85).aspx
+
+<numbers name="optional" propname="optional" start="optional" stop="optional"/>
+
+<fileNames name="optional" propname="optional" directory="required" includeSubdirectories="optional" useSubset="optional"/>
+
+<fontNames name="optional" propname="optional"/>
+
+<wmpMediaItems name="optional" propname="optional" propvalue="optional" attrname="optional" attrvalue="optional" listenFor="optional" useSubset="optional"/>
+
+<ruleScript language="required" name="optional" propname="optional">something</ruleScript>
+
+<recentMessages name="optional" propname="optional" maxInboxItems="optional" maxSentItems="optional" useSubset="optional">something</recentMessages>
+
+
+
+===  Executors  === 
+
+<insertText>text</insertText>
+  text can include xml escape characters, such as &lt; &gt; for angle brackets.
+  For a list, see http://www.theukwebdesigncompany.com/articles/entity-escape-characters.php 
+  Note that xml truncates leading/trailing space characters, but you can use &#32; instead.
+
+<sendKeys times="optional">keys</sendKeys>
+  text can include escape characters such as {ENTER} {DELETE} {{CTRL}}c or unicode {u+0020}
+  For a list, see http://blogs.msdn.com/robch/archive/2008/05/07/sending-keys-using-custom-wsrmacros.aspx
+  Note that you must escape some characters, including: {+} {^} {%} {(} {)}
+    and you must use {u+007b} {u+007d} or &#123; &#125; for curly brackets
+    and {u+003c} {u+003e} or &lt; &gt; for angle brackets.
+  Note that xml truncates leading/trailing space characters, but you can use {u+0020} or &#32; instead.
+
+  You can sendKeys to control almost any application, for example  {{ALT}}fs  executes the underlined letter in menus (&File|&Save for most apps)
+    or to control Vista http://windowshelp.microsoft.com/windows/en-us/help/2503b91d-d780-4c80-8f08-2f48878dc5661033.mspx
+
+<run command="required" params="optional" directory="optional"/>
+
+<disambiguate title="optional" prompt="optional" timeout="optional" confidenceDelta="optional" propname="required"/>
+
+<emulateRecognition waitForDisambiguation="optional">text to recognize</emulateRecognition>
+
+<waitFor seconds="required" anyStateNameIsSet="optional" allStateNamesAreSet="optional"/>
+
+<speak speakFlags="optional">text to speech</speak>
+
+<alert title="optional" timeout="optional">text</alert>
+
+<confirm title="optional" timeout="optional">text</confirm>
+
+<prompt resultState="required" title="optional" timeout="optional" defaultValue="optional">text</prompt>
+
+<setTextFeedback style="optional" speak="optional">text</setTextFeedback>
+
+<wmpMediaPlay attrname="required" attrvalue="required"/>
+
+<wmpMediaControl command="required" times="optional"/>
+
+<sendMessage className="required" windowName="required" message="required" wParam="optional" lParam="optional">something</sendMessage>
+
+<setState name="required" value="optional"/>
+
+<switchToApp windowTitle="optional" windowTitleContains="optional"/>
+
+<minimizeApp windowTitle="optional" windowTitleContains="optional"/>
+
+<restoreApp windowTitle="optional" windowTitleContains="optional"/>
+
+<maximizeApp windowTitle="optional" windowTitleContains="optional"/>
+
+<closeApp windowTitle="optional" windowTitleContains="optional"/>
+
+<mouse command="required" button="optional" position="optional" positionStyle="optional" scrollAmount="optional" scrollDirection="optional" modifierKeys="optional"/>
+
+<script language="required" autoResolveProperties="optional">
+  <![CDATA[
+  code
+  ]]>
+</script>
+
+  Scripts can access the following native objects
+    Result         see ISpeechRecoResult http://msdn.microsoft.com/en-us/library/ms722527(VS.85).aspx
+    Application    properties: clipboardData, Mouse;  methods: many of the Executors
+    NamedStates    see http://blogs.msdn.com/robch/archive/2008/07/01/macro-of-the-day-windows-media-player.aspx and Math Test.wsrmac
+    CommandSet     see above
+    ChooseFromList see above
+    Debug          see http://blogs.msdn.com/robch/archive/2008/06/09/macro-of-the-day-send-email-to-outlookcontact.aspx
+    Command        (unknown)
+  Scripts can also use GetObject and CreateObject, but read this entire thread http://tech.groups.yahoo.com/group/ms-speech/message/4009
+  Scripts can use various languages including:
+    VBScript   see http://msdn.microsoft.com/en-us/library/t0aew7h6(VS.85).aspx
+    JScript    see http://msdn.microsoft.com/en-us/library/hbxc2t98(VS.85).aspx
+  And these languages may include their own Objects and Collections, such as:
+    RegExp     to Test, Replace and Execute with regular expressions 
+  
+
+
+The content of this file is my personal opinion only and although I am an employee of Intel,
+the statements I make here in no way represent Intel's position on the issue.
+It is provided "AS IS" with no warranties, and confers no rights.
+
+
+===  <sendKeys/> Appendix (Added by AG)  === 
+
+{BACKSPACE} 
+{BS} 
+{BKSP} 
+{CAPSLOCK} 
+{DEL} 
+{DELETE} 
+{DOWN} 
+{END} 
+{ENTER} 
+{ESC} 
+{HOME} 
+{INS} 
+{INSERT} 
+{LEFT} 
+{NUMLOCK} 
+{PGDN} 
+{PGUP} 
+{RIGHT} 
+{SCROLLLOCK} 
+{TAB} 
+{UP} 
+{F1} 
+{F2} 
+{F3} 
+{F4} 
+{F5} 
+{F6} 
+{F7} 
+{F8} 
+{F9} 
+{F10} 
+{F11} 
+{F12} 
+{NUM0} 
+{NUM1} 
+{NUM2} 
+{NUM3} 
+{NUM4} 
+{NUM5} 
+{NUM6} 
+{NUM7} 
+{NUM8} 
+{NUM9} 
+{NUM+} 
+{NUM-} 
+{NUM*} 
+{NUM/} 
+{NUM.} 
+{NUM~} 
+{LALT} 
+{ALT} 
+{RALT} 
+{LSHIFT} 
+{SHIFT} 
+{RSHIFT} 
+{LCTRL} 
+{CTRL} 
+{RCTRL} 
+{LWIN} 
+{WIN} 
+{RWIN} 
+{MENU} 
+{BREAK} 
+{PRTSC} 
+{SLEEP} 
+{CAPSLOCK+} 
+{CAPSLOCK-} 
+{NUMLOCK+} 
+{NUMLOCK-} 
+{SCROLLLOCK+} 
+{SCROLLLOCK-}
+
+
+===  <mouse modifierKeys/> Appendix (Added by AG)  === 
+This is a list of the acceptable modifierKey values. Based on table: https://autohotkey.com/docs/KeyList.htm.
+
+modifierKey		meaning
+-----------		-------
+<#				LWin 
+>#				RWin 
+^				Control
+!				Alt 
++				Shift 
+<^				LControl 
+>^				RControl 
+<+				LShift 
+<!				LAlt 
+>!				RAlt 
+
